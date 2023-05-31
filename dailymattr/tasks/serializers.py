@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from datetime import date
-from .models import Tasks
+from .models import Tasks, Cards
 
 
 class TasksSerializer(serializers.Serializer):
@@ -15,3 +15,16 @@ class TasksSerializer(serializers.Serializer):
     link = serializers.URLField()
     card_id = serializers.IntegerField(read_only=True)
     status_id = serializers.IntegerField(default=1)
+
+    def create(self, validated_data):
+
+        def get_card_id():
+            try:
+                post_date = validated_data['due_date']
+            except KeyError:
+                post_date = date.today()
+
+            card = Cards.objects.filter(due_date=post_date).values()
+            return card[0]['id'] if card else Cards.objects.create(due_date=post_date).id
+
+        return Tasks.objects.create(**validated_data, card_id=get_card_id())
