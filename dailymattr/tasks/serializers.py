@@ -17,20 +17,34 @@ class TasksSerializer(serializers.Serializer):
     status_id = serializers.IntegerField(default=1)
 
     def create(self, validated_data):
+        card_id = self.get_card_id(validated_data)
+        return Tasks.objects.create(**validated_data, card_id=card_id)
 
-        def get_card_id():
-            try:
-                post_date = validated_data['due_date']
-            except KeyError:
-                post_date = date.today()
+    def update(self, instance, validated_data):
+        if validated_data.get('due_date'):
+            instance.due_date = validated_data['due_date']
+            instance.card_id = self.get_card_id(validated_data)
 
-            card = Cards.objects.filter(due_date=post_date).values()
-            return card[0]['id'] if card else Cards.objects.create(due_date=post_date).id
+        instance.updated_at = validated_data.get('updated_at', instance.updated_at)
+        instance.description = validated_data.get('description', instance.description)
+        instance.task_comment = validated_data.get('task_comment', instance.task_comment)
+        instance.task_numb = validated_data.get('task_numb', instance.task_numb)
+        instance.priority = validated_data.get('priority', instance.priority)
+        instance.link = validated_data.get('link', instance.link)
+        instance.save()
+        return instance
 
-        return Tasks.objects.create(**validated_data, card_id=get_card_id())
+    @staticmethod
+    def get_card_id(validated_data):
+        try:
+            post_date = validated_data['due_date']
+        except KeyError:
+            post_date = date.today()
+
+        card = Cards.objects.filter(due_date=post_date).values()
+        return card[0]['id'] if card else Cards.objects.create(due_date=post_date).id
 
 
 class CardsSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
     title = serializers.CharField(max_length=64)
     due_date = serializers.DateField()

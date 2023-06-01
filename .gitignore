@@ -1,3 +1,4 @@
 venv
 dailymattr/tasks/__pycache__/
+dailymattr/dailymattr/__pycache__
 .DS_Store

@@ -11,12 +11,25 @@ class TasksAPIView(APIView):
         t = Tasks.objects.all()
         return Response(TasksSerializer(t, many=True).data)
 
-
     def post(self, request):
         serializer = TasksSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        return Response(serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        if not pk:
+            return Response({'error': 'Method PUT not allowed'})
+        try:
+            instance = Tasks.objects.get(pk=pk)
+        except:
+            return Response({'error': 'Object does not exists'})
+
+        serializer = TasksSerializer(data=request.data, instance=instance, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
 
 
