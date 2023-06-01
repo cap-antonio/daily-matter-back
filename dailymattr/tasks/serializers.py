@@ -28,3 +28,9 @@ class TasksSerializer(serializers.Serializer):
             return card[0]['id'] if card else Cards.objects.create(due_date=post_date).id
 
         return Tasks.objects.create(**validated_data, card_id=get_card_id())
+
+
+class CardsSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField(max_length=64)
+    due_date = serializers.DateField()
