@@ -4,13 +4,13 @@ from .models import Tasks, Cards
 
 
 class TasksSerializer(serializers.Serializer):
-    created_at = serializers.DateTimeField(read_only=True)
-    updated_at = serializers.DateTimeField(read_only=True)
-    due_date = serializers.DateField(default=date.today)
+    createdAt = serializers.DateTimeField(read_only=True)
+    updatedAt = serializers.DateTimeField(read_only=True)
+    dueDate = serializers.DateField(default=date.today)
     description = serializers.CharField(max_length=140)
-    task_comment = serializers.CharField(max_length=140)
+    taskComment = serializers.CharField(max_length=140)
 
-    task_numb = serializers.CharField(max_length=32)
+    taskNumb = serializers.CharField(max_length=32)
     priority = serializers.CharField(max_length=12)
     link = serializers.URLField()
     card_id = serializers.IntegerField(read_only=True)
@@ -21,14 +21,14 @@ class TasksSerializer(serializers.Serializer):
         return Tasks.objects.create(**validated_data, card_id=card_id)
 
     def update(self, instance, validated_data):
-        if validated_data.get('due_date'):
-            instance.due_date = validated_data['due_date']
+        if validated_data.get('dueDate'):
+            instance.dueDate = validated_data['dueDate']
             instance.card_id = self.get_card_id(validated_data)
 
-        instance.updated_at = validated_data.get('updated_at', instance.updated_at)
+        instance.updatedAt = validated_data.get('updatedAt', instance.updatedAt)
         instance.description = validated_data.get('description', instance.description)
-        instance.task_comment = validated_data.get('task_comment', instance.task_comment)
-        instance.task_numb = validated_data.get('task_numb', instance.task_numb)
+        instance.taskComment = validated_data.get('taskComment', instance.taskComment)
+        instance.taskNumb = validated_data.get('taskNumb', instance.taskNumb)
         instance.priority = validated_data.get('priority', instance.priority)
         instance.link = validated_data.get('link', instance.link)
         instance.save()
@@ -37,12 +37,12 @@ class TasksSerializer(serializers.Serializer):
     @staticmethod
     def get_card_id(validated_data):
         try:
-            post_date = validated_data['due_date']
+            post_date = validated_data['dueDate']
         except KeyError:
             post_date = date.today()
 
-        card = Cards.objects.filter(due_date=post_date).values()
-        return card[0]['id'] if card else Cards.objects.create(due_date=post_date).id
+        card = Cards.objects.filter(dueDate=post_date).values()
+        return card[0]['id'] if card else Cards.objects.create(dueDate=post_date).id
 
 
 class CardsSerial(serializers.ModelSerializer):
@@ -53,11 +53,11 @@ class CardsSerial(serializers.ModelSerializer):
 class CardsSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(max_length=64)
-    due_date = serializers.DateField()
+    dueDate = serializers.DateField()
 
     def create(self, validated_data):
-        due_date = validated_data['due_date']
-        card = Cards.objects.filter(due_date=due_date)
+        dueDate = validated_data['dueDate']
+        card = Cards.objects.filter(dueDate=dueDate)
         return card[0] if card else Cards.objects.create(**validated_data)
 
     def update(self, instance, validated_data):

@@ -1,7 +1,7 @@
 from rest_framework import generics
 
 from django.forms import model_to_dict
-from datetime import date, datetime
+from datetime import date, timedelta
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -102,6 +102,9 @@ class CardsAPIView(APIView):
         return card_lst
 
 # ---------------------------------------------------------------------------------------------
+# Получение задач до конца рабочей недели
+# Пагинация для оставшихся карточек
+# Вернуть все записи в том числе текущей рабочей недели, если помещаются в 1 карточку
 
 class CardsAPIListPagination(PageNumberPagination):
     page_size = 2
@@ -115,14 +118,18 @@ class CardsAPIList(generics.ListCreateAPIView):
     serializer_class = CardsSerial
     pagination_class = CardsAPIListPagination
 
-    def get(self, request):
-        CardsAPIListPagination.page_size = self.count_workdays(2)
-        page = self.paginate_queryset(self.get_queryset())
+    def get_queryset(self):
+        current = self.get_workweek()
+        return Cards.objects.filter(dueDate__range=current)
 
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            instance = self.order_tasks_by_cards(serializer.instance)
-            return self.get_paginated_response(instance)
+    # def get(self, request):
+        # CardsAPIListPagination.page_size = self.count_workdays(2)
+        # page = self.paginate_queryset(self.get_queryset())
+
+        # if page is not None:
+            # serializer = self.get_serializer(page, many=True)
+            # instance = self.order_tasks_by_cards(serializer.instance)
+            # return self.get_paginated_response(instance)
 
     @staticmethod
     def order_tasks_by_cards(cards):
@@ -138,6 +145,13 @@ class CardsAPIList(generics.ListCreateAPIView):
         return card_lst
 
     @staticmethod
-    def count_workdays(workday):
-        today = datetime.weekday(date.today())
-        return 5 - (today - workday) if today >= workday else 7 - workday + today
+    def get_workweek():
+        today = date.today()
+        week = today.weekday() + 1
+        workweek_st = 3
+
+        diff = week - workweek_st if week > workweek_st else 7 - workweek_st + week
+
+        start = today - timedelta(diff)
+        end = start + timedelta(5)
+        return [today, end]
