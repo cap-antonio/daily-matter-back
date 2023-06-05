@@ -26,7 +26,7 @@
 				<identity><![CDATA[GENERATED ALWAYS AS IDENTITY ]]></identity>
 			</column>
 			<column name="title" type="varchar" length="64" jt="12" />
-			<column name="created_at" type="timestamp" jt="93" />
+			<column name="due_date" prior="created_at" type="timestamp" jt="93" />
 			<column name="user_id" type="integer" jt="4" mandatory="y" />
 			<index name="pk_cards" unique="PRIMARY_KEY" >
 				<column name="id" />
@@ -40,29 +40,11 @@
 				<identity><![CDATA[GENERATED ALWAYS AS IDENTITY ]]></identity>
 			</column>
 			<column name="title" type="varchar" length="32" jt="12" />
+			<column name="workdays" type="smallint" jt="5" />
+			<column name="workweek_start" type="smallint" jt="5" />
 			<index name="pk_managers_1" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-		</table>
-		<table name="details" prior="tbl" >
-			<column name="id" type="integer" jt="4" mandatory="y" >
-				<identity><![CDATA[GENERATED ALWAYS AS IDENTITY ]]></identity>
-			</column>
-			<column name="created_at" type="timestamp" jt="93" mandatory="y" >
-				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
-			</column>
-			<column name="updated_at" type="timestamp" jt="93" mandatory="y" >
-				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
-			</column>
-			<column name="description" type="varchar" length="140" jt="12" />
-			<column name="task_comment" type="varchar" length="140" jt="12" />
-			<column name="task_id" type="integer" jt="4" mandatory="y" />
-			<index name="pk_details" unique="PRIMARY_KEY" >
-				<column name="id" />
-			</index>
-			<fk name="fk_details_tasks" to_schema="tdailyplan" to_table="tasks" delete_action="cascade" >
-				<fk_column name="task_id" pk="id" />
-			</fk>
 		</table>
 		<table name="managers" prior="tbl" >
 			<column name="id" type="integer" jt="4" mandatory="y" >
@@ -98,6 +80,11 @@
 			<column name="id" type="integer" jt="4" mandatory="y" >
 				<identity><![CDATA[GENERATED ALWAYS AS IDENTITY ]]></identity>
 			</column>
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="update_at" type="timestamp" jt="93" />
+			<column name="due_date" type="timestamp" jt="93" />
+			<column name="description" type="varchar" length="140" jt="12" />
+			<column name="task_comment" type="varchar" length="140" jt="12" />
 			<column name="task_number" type="varchar" length="32" jt="12" />
 			<column name="priority" type="varchar" length="12" jt="12" />
 			<column name="link" type="text" jt="12" />
@@ -140,14 +127,13 @@
 	</schema>
 	<connector name="PostgreSQL" database="PostgreSQL" host="localhost" port="5432" instance="postgres" useSystemProxy="false" />
 	<layout name="Default Layout" id="Layout-1384" joined_routing="y" show_column_type="y" show_relation="columns" >
-		<entity schema="tdailyplan" name="absences" color="C1D8EE" x="672" y="192" />
-		<entity schema="tdailyplan" name="cards" color="C1D8EE" x="320" y="336" />
-		<entity schema="tdailyplan" name="departments" color="3986C1" x="64" y="240" />
-		<entity schema="tdailyplan" name="details" color="C1D8EE" x="656" y="464" />
+		<entity schema="tdailyplan" name="absences" color="C1D8EE" x="704" y="208" />
+		<entity schema="tdailyplan" name="cards" color="C1D8EE" x="752" y="480" />
+		<entity schema="tdailyplan" name="departments" color="3986C1" x="48" y="272" />
 		<entity schema="tdailyplan" name="managers" color="C1D8EE" x="48" y="80" />
 		<entity schema="tdailyplan" name="roles" color="3986C1" x="576" y="48" />
 		<entity schema="tdailyplan" name="status" color="C1D8EE" x="96" y="624" />
 		<entity schema="tdailyplan" name="tasks" color="C1D8EE" x="320" y="480" />
-		<entity schema="tdailyplan" name="users" color="C1D8EE" x="304" y="96" />
+		<entity schema="tdailyplan" name="users" color="C1D8EE" x="320" y="160" />
 	</layout>
 </project>
