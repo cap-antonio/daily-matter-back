@@ -45,22 +45,24 @@ class TasksSerializer(serializers.Serializer):
         return card[0]['id'] if card else Cards.objects.create(dueDate=post_date).id
 
 
-class CardsSerial(serializers.ModelSerializer):
+class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         fields = '__all__'
 
-class CardsSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    title = serializers.CharField(max_length=64)
-    dueDate = serializers.DateField()
 
-    def create(self, validated_data):
-        dueDate = validated_data['dueDate']
-        card = Cards.objects.filter(dueDate=dueDate)
-        return card[0] if card else Cards.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.save()
-        return instance
+# class CardsSerializer(serializers.Serializer):
+#    id = serializers.IntegerField(read_only=True)
+#    title = serializers.CharField(max_length=64)
+#    dueDate = serializers.DateField()
+#    abscence_id = serializers.IntegerField()
+#
+#    def create(self, validated_data):
+#        dueDate = validated_data['dueDate']
+#        card = Cards.objects.filter(dueDate=dueDate)
+#        return card[0] if card else Cards.objects.create(**validated_data)
+#
+#    def update(self, instance, validated_data):
+#        instance.title = validated_data.get('title', instance.title)
+#        instance.save()
+#        return instance

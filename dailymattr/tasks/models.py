@@ -19,6 +19,7 @@ class Tasks(models.Model):
 class Cards(models.Model):
     title = models.CharField(max_length=64, blank=True)
     dueDate = models.DateField()
+    abscence = models.ForeignKey('Abscences', on_delete=models.PROTECT, null=True, blank=True)
     # userId = models.ForeignKey('Users')
 
 
@@ -27,3 +28,10 @@ class Status(models.Model):
 
     def __str__(self):
         return self.status_type
+
+
+class Abscences(models.Model):
+    absDescription = models.CharField(max_length=140, blank=True)
+    approvement = models.CharField(max_length=12, default='pending')
+    startDate = models.DateField(blank=True)
+    endDate = models.DateField(blank=True)

@@ -21,10 +21,13 @@ from tasks.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('api/v1/taskslist/', TasksAPIView.as_view()),
     path('api/v1/taskslist/<int:pk>/', TasksAPIView.as_view()),
-    path('api/v1/cardslist/', CardsAPIView.as_view()),
-    path('api/v1/cardslist/<int:pk>/', CardsAPIView.as_view()),
 
-    path('api/cardslist/', CardsAPIList.as_view()),
+    path('api/v1/cardslist/', CardsAPIList.as_view()),
+    path('api/v1/abscencescreate/', AbscencesAPIView.as_view()),
+
+    # path('api/v1/cardslist/', CardsAPIView.as_view()),
+    # path('api/v1/cardslist/<int:pk>/', CardsAPIView.as_view()),
 ]
