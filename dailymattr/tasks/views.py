@@ -121,7 +121,6 @@ class CardsAPIList(generics.ListCreateAPIView):
 
         return card_lst
 
-# --- Active
 
 class AbscencesAPIView(APIView):
     def post(self, request):
@@ -134,7 +133,7 @@ class AbscencesAPIView(APIView):
         dates = self.create_dates_list(post_new.startDate, post_new.endDate)
         self.create_abscards(dates, post_new.pk)
 
-        return Response({model_to_dict(post_new)})
+        return Response(model_to_dict(post_new))
 
     @staticmethod
     def create_dates_list(start, end):
@@ -149,7 +148,9 @@ class AbscencesAPIView(APIView):
         delta = timedelta(days=1)
         dates = []
         while start_dt <= end_dt:
-            dates.append(start_dt.isoformat())
+            # Checking if the date is within the workweek range
+            if start_dt.isoweekday() in range(1, 5+1):
+                dates.append(start_dt.isoformat())
             start_dt += delta
 
         return dates
